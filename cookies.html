@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cookies</title>
+    <style>
+         *  {
+            box-sizing: border-box;
+        }
+        body {
+            min-width: 100%;
+            margin: 0;
+            padding: 1em 4em;
+            background: #9cc2cb;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+        }
+        .container {
+            display: block;
+            overflow: auto;
+            border: 1px solid #002a80;
+            margin: 7% auto;
+            padding: 1em 4em;
+            width: 100%;
+            border-radius: 1em;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .row {
+            max-width: 100%;
+        }
+         .sec-left, .sec-right {
+             width: 50%;
+             float: left;
+        }
+        .form-group {
+            overflow: auto;
+            margin: 1em;
+            clear: both;
+        }
+         label {
+             width: 20%;
+             font-weight: bold;
+             display: block;
+             float: left;
+             text-align: right;
+             padding: 0.75em 0;
+         }
+         .form-control {
+             width: 70%;
+             padding: 0 1em;
+             float: left;
+         }
+        input, select, button {
+            width: 100%;
+            padding: 0.75em;
+        }
+
+    </style>
+</head>
+
+<body onload="checkCookie()">
+
+    <div class="container">
+        <h1 id="welcome-message">Welcome</h1>
+
+        <div class="row">
+            <div class="sec-left">
+                <h2>Edit your information below: </h2>
+
+                <div class="form-group">
+                    <label for="first-name">First Name: </label>
+                    <div class="form-control">
+                        <input type="text" name="first-name" id="first-name" placeholder=" First Name" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="last-name">Last Name: </label>
+                    <div class="form-control">
+                        <input type="text" name="last-name" id="last-name" placeholder=" Last Name" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender: </label>
+                    <div class="form-control">
+                        <select name="gender" id="gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label></label>
+                    <div class="form-control">
+                        <button type="button" onclick="saveDetails()">Save Details</button>
+                    </div>
+                </div>
+            </div>
+            <div class="sec-right">
+                <h2>Statistics:</h2>
+
+                <ul>
+                    <li id="full-name">Full name: Not Set</li>
+                    <li id="visits">You have visited this site 0 times.</li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let numVisits = getCookie("visits") || 0;
+        setCookie("visits", (Number(numVisits) + 1));
+
+        function saveDetails() {
+            let firstName = document.getElementById("first-name").value;
+            let lastName = document.getElementById("last-name").value;
+            let gender = document.getElementById("gender").value;
+
+            setCookie("first_name", firstName);
+            setCookie("last_name", lastName);
+            setCookie("gender", gender);
+        }
+
+        function setCookie(name, value) {
+            let dateNow = new Date();
+            let expiryDays = 30;
+            dateNow.setTime(dateNow.getTime() + (expiryDays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + dateNow.toUTCString();
+            value = value.toString();
+
+            if(value.length > 0) document.cookie = name + "=" + value + ";" + expires + ";path=/";
+            checkCookie();
+        }
+
+        function getCookie(cookieName) {
+            let name = cookieName + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i < ca.length; i ++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function checkCookie() {
+            let firstName = getCookie("first_name");
+            let lastName = getCookie("last_name");
+            let gender = getCookie("gender");
+            let visits = getCookie("visits");
+            let salutation = "";
+
+            switch (gender) {
+                case "Male":
+                    salutation = "Mr. ";
+                    break;
+                case "Female":
+                    salutation = "Ms. ";
+                    break;
+                default:
+                    salutation = "Mr./Ms. ";
+            }
+
+
+            if (firstName !== "" && lastName !== "") {
+                setText("welcome-message", "Welcome back, " + salutation + " " + lastName);
+                setText("full-name", "Full name: " + firstName + " " + lastName);
+            } else {
+                setText("welcome-message", "Welcome! Please fill in your Details.");
+            }
+
+            if(visits !== "") {
+                setText("visits", "You have visited this page " + visits + " time(s).");
+            }
+        }
+
+        function setText(id, text) {
+            let element = document.getElementById(id);
+            if(element != null) {
+                element.innerHTML = text;
+            }
+        }
+    </script>
+
+	<footer>
+	<p><center>Copyright (c) Mobeen Ahmed, 2019</center></p>
+	</footer>
+</body>
+
+</html>
